@@ -1,0 +1,35 @@
+---
+import type { GetStaticPaths } from "astro";
+import PlayerInfo from "@/components/player-info.astro";
+import api from "@/services/api";
+import Layout from "src/layouts/Layout.astro";
+import { Image } from "astro:assets";
+
+export const getStaticPaths = (async () => {
+  const [error, data] = await api.getPlayers();
+  if (error) throw new Error("Error al pedir los jugadores");
+
+  const { response } = data;
+
+  return response.map(({ player }) => {
+    return { params: { id: player.id }, props: { ...player } };
+  });
+}) satisfies GetStaticPaths;
+
+const { name, photo } = Astro.props;
+---
+
+<Layout title={name}>
+  <section class="mt-10 mx-10 flex flex-col justify-center items-center">
+    <div>
+      <a href="/">Regresar</a>
+      <h1 class="text-5xl capitalize">{name}</h1>
+      <Image
+        src={photo}
+        alt={`Profile photo of ${name}`}
+        height={150}
+        width={150}
+      />
+    </div>
+  </section>
+</Layout>

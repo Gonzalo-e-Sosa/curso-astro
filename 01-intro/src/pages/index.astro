@@ -1,0 +1,15 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Inicio">
+  <h1>Estático vs Servido</h1>
+  <p>Momento actual: {new Date().toLocaleString()}</p>
+  <p id="actual"></p>
+
+  <script>
+    const $p = document.querySelector("#actual") as HTMLParagraphElement;
+
+    $p.textContent = `Momento actual real: ${new Date().toLocaleString()}`;
+  </script>
+</Layout>
