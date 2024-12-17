@@ -1,0 +1,45 @@
+---
+import PlayerInfo from "@/components/player-info.astro";
+import Layout from "@/layouts/Layout.astro";
+import api from "@/services/api";
+import type { GetStaticPaths } from "astro";
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const [error, data] = await api.getPlayers();
+
+  if (error) {
+    throw new Error("Error al pedir los jugadores");
+  }
+
+  return paginate(data.response, {
+    pageSize: 20,
+  });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+const { data } = page;
+---
+
+<Layout title="Football Static | Home">
+  <main class="p-2">
+    <h1 class="text-3xl">Football Players</h1>
+
+    <section aria-label="List of Football Players" class="w-full">
+      <ul
+        class="grid grid-cols-1 sm:grid-cols-4 md:grid-cols-5 justify-items-center gap-4"
+      >
+        {
+          data.map(({ player }) => (
+            <li>
+              <PlayerInfo player={player} />
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+    <section>
+      <a href={`${page.url.prev}`}>Previous Page</a>
+      <a href={`${page.url.next}`}>Next Page</a>
+    </section>
+  </main>
+</Layout>
