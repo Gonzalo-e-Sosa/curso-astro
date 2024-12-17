@@ -1,6 +1,5 @@
 ---
 import type { GetStaticPaths } from "astro";
-import PlayerInfo from "@/components/player-info.astro";
 import api from "@/services/api";
 import Layout from "src/layouts/Layout.astro";
 import { Image } from "astro:assets";
@@ -16,6 +15,7 @@ export const getStaticPaths = (async () => {
   });
 }) satisfies GetStaticPaths;
 
+const { id } = Astro.params;
 const { name, photo } = Astro.props;
 ---
 
@@ -25,6 +25,7 @@ const { name, photo } = Astro.props;
       <a href="/">Regresar</a>
       <h1 class="text-5xl capitalize">{name}</h1>
       <Image
+        transition:name={`${id}-image`}
         src={photo}
         alt={`Profile photo of ${name}`}
         height={150}
