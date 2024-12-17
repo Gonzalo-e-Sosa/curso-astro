@@ -1,26 +1,33 @@
 ---
 import { Image } from "astro:assets";
-import type { Player } from "../models/player";
-import api from "@/services/api";
+import type { Player } from "@/models/player";
 
 interface Props {
   player: Player;
 }
 
 const { player } = Astro.props;
-const { id, name, firstname, lastname, age, birth, nationality, height } =
-  player;
-
-const playerPhotoURL = api.getPlayerPhotoURL(id);
+const {
+  id,
+  name,
+  firstname,
+  lastname,
+  age,
+  birth,
+  nationality,
+  height,
+  photo,
+} = player;
 ---
 
-<a href={`players/${id}`}>
+<a href={`${id}`}>
   <article class="flex flex-col gap-2 p-4">
     <header>
       <h2>{name}</h2>
     </header>
     <Image
-      src={playerPhotoURL.toString()}
+      transition:name={`${id}-image`}
+      src={photo}
       alt={`Profile photo of ${name}`}
       width={150}
       height={150}
