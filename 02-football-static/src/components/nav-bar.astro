@@ -1,0 +1,42 @@
+---
+const links = [
+  { href: "/", label: "List" },
+  { href: "/players/1", label: "Pages" },
+  { href: "/favorites", label: "Favorites" },
+];
+
+const { pathname } = Astro.url;
+---
+
+<nav class="shadow bg-slate-800">
+  <div
+    class="container flex items-center justify-center p-6 mx-auto text-gray-600"
+  >
+    {
+      links.map(({ href, label }) => (
+        <div>
+          <a href={href} class="link">
+            {label}
+          </a>
+          {pathname === href ? (
+            <div transition:name="menu-line" class="active" />
+          ) : (
+            <div class="not-active" />
+          )}
+        </div>
+      ))
+    }
+  </div>
+</nav>
+
+<style>
+  .link {
+    @apply text-gray-800 dark:text-gray-200 mx-1.5 sm:mx-6;
+  }
+  .active {
+    @apply border-b-2 border-blue-500 mx-4;
+  }
+  .not-active {
+    @apply border-b-2 border-transparent;
+  }
+</style>
