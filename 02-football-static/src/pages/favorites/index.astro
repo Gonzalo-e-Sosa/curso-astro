@@ -1,5 +1,14 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import FavoritePlayers from "@/components/react/favorite-players.tsx";
+
+// Transition persist para mantener estado páginas
 ---
 
-<Layout title="Favorites Players" />
+<Layout title="Favorites Players">
+  <FavoritePlayers
+    client:only="react"
+    transition:persist="favorites"
+    transition:persist-props
+  />
+</Layout>
