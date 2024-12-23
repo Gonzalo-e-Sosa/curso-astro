@@ -4,7 +4,7 @@ import api from "@/services/api";
 import Layout from "src/layouts/Layout.astro";
 import { Image } from "astro:assets";
 import HeartFilled from "@/assets/line-md--heart-filled.svg";
-import Heart from "@/assets/line-md--heart.svg";
+import HeartOutline from "@/assets/line-md--heart.svg";
 
 export const getStaticPaths = (async () => {
   const [error, data] = await api.getPlayers();
@@ -27,9 +27,14 @@ const { name, photo } = Astro.props;
       <button onclick="history.back()" class="text-blue-500 align-top"
         >Regresar</button
       >
-      <button id="btn-favorite" class="ml-4 hover:animate-pulse">
-        <Heart />
-        <HeartFilled class="hidden" />
+      <button
+        id="btn-favorite"
+        class="ml-4 hover:animate-pulse"
+        data-name={name}
+        data-id={id}
+      >
+        <HeartOutline data-outline class="text-red-600" />
+        <HeartFilled data-filled class="text-red-600 hidden" />
       </button>
     </header>
     <div>
@@ -45,3 +50,79 @@ const { name, photo } = Astro.props;
     </div>
   </section>
 </Layout>
+
+<script>
+  document.addEventListener("astro:before-preparation", () => {
+    console.log("Before preparation");
+  });
+
+  document.addEventListener("astro:after-preparation", () => {
+    console.log("After preparation");
+  });
+
+  document.addEventListener("astro:before-swap", () => {
+    console.log("Before swap");
+  });
+
+  document.addEventListener("astro:after-swap", () => {
+    console.log("After swap");
+  });
+
+  type Player = {
+    id: string;
+    name: string;
+  };
+
+  const handlePageLoad = () => {
+    const btnFavorite = document.getElementById(
+      "btn-favorite"
+    ) as HTMLButtonElement;
+
+    if (!btnFavorite) return;
+
+    const heartFilled = btnFavorite.querySelector(
+      "[data-filled]"
+    ) as HTMLElement;
+    const heartOutline = btnFavorite.querySelector(
+      "[data-outline]"
+    ) as HTMLElement;
+
+    const { name, id } = btnFavorite.dataset as Player;
+
+    let favoritePlayers = JSON.parse(
+      localStorage.getItem("favorite-players") ?? "[]"
+    ) as Player[];
+
+    const isFavorite = favoritePlayers.some((player) => player.id === id);
+
+    const toggleFavorite = (isFavorite: boolean) => {
+      if (isFavorite) {
+        heartFilled.classList.remove("hidden");
+        heartOutline.classList.add("hidden");
+      } else {
+        heartFilled.classList.add("hidden");
+        heartOutline.classList.remove("hidden");
+      }
+    };
+
+    toggleFavorite(isFavorite);
+
+    localStorage.setItem("favorite-players", JSON.stringify(favoritePlayers));
+
+    btnFavorite.addEventListener("click", () => {
+      const isFavorite = favoritePlayers.some((player) => player.id === id);
+
+      if (isFavorite) {
+        favoritePlayers = favoritePlayers.filter((player) => player.id !== id);
+      } else {
+        favoritePlayers.push({ id, name });
+      }
+      toggleFavorite(!isFavorite);
+
+      localStorage.setItem("favorite-players", JSON.stringify(favoritePlayers));
+    });
+  };
+
+  // Esto se debe al view transitions
+  document.addEventListener("astro:page-load", handlePageLoad);
+</script>
